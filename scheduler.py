@@ -2,27 +2,18 @@
 
 #Imports
 import openpyxl
-import smtplib
 from datetime import date
 from datetime import timedelta
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-from email.mime.text import MIMEText
-from email.utils import formatdate
-from email import encoders
+import win32com.client as win32
 
 #User settings constants
-MY_EMAIL = ""
-MY_EMAIL_PASSWORD = ""
-EMAIL_TIMESHEET_RECIPIENT = ""
-SCHEDULE_FILE_NAME = "timesheet.xlsx"
+EMAIL_TIMESHEET_RECIPIENT = "example@example.com"
+SCHEDULE_FILE_PATH = "C:\\Path\\To\\Timesheet\\timesheet.xlsx"
 SCHEDULE_SHEET_NAME = 'Sheet1'
 SCHEDULE_SHEET_WEEK_DATES_BEGINNING_CELL = 'B19'
-SCHEDULE_SHEET_WEEK_DATES_ENDING_CELL = 'B25'
 SCHEDULE_SHEET_WEEK_STARTING_CELL = 'E8'
+SCHEDULE_SHEET_WEEK_DATES_ENDING_CELL = 'B25'
 SCHEDULE_SHEET_SIGNATURE_DATE_CELL = 'E34'
-EMAIL_PROVIDER = "smtp.gmail.com" # No need to change this.
-EMAIL_PROVIDER_PORT = 587 # No need to change this.
 
 #Other constants
 NUMBER_OF_DAYS_IN_WEEK = 7
@@ -32,7 +23,7 @@ TODAY = date.today()
 def formatDate(date):
     return date.strftime("%m/%d/%Y")
 
-scheduleWorkBook = openpyxl.load_workbook(SCHEDULE_FILE_NAME)
+scheduleWorkBook = openpyxl.load_workbook(SCHEDULE_FILE_PATH)
 
 scheduleSheet = scheduleWorkBook.get_sheet_by_name(SCHEDULE_SHEET_NAME)
 
@@ -53,23 +44,15 @@ scheduleSheet[SCHEDULE_SHEET_WEEK_STARTING_CELL] = weekStarting
 scheduleSheet[SCHEDULE_SHEET_SIGNATURE_DATE_CELL] = 'Date: ' + formatDate(TODAY)
 
 #Save all changes to the workbook.
-scheduleWorkBook.save(SCHEDULE_FILE_NAME)
+scheduleWorkBook.save(SCHEDULE_FILE_PATH)
 
-#Create email.
-msg = MIMEMultipart()
-msg['From'] = MY_EMAIL
-msg['To'] = EMAIL_TIMESHEET_RECIPIENT
-msg['Date'] = formatDate(TODAY)
-msg['Subject'] = "Timesheet - Week of : " + weekStarting
+#Send email
+outlook = win32.Dispatch("outlook.application")
+mail = outlook.CreateItem(0)
+mail.To = EMAIL_TIMESHEET_RECIPIENT
+mail.Subject = "Timesheet - Week of : " + weekStarting
 
-part = MIMEBase('application', "octet-stream")
-part.set_payload(open(SCHEDULE_FILE_NAME, "rb").read())
-encoders.encode_base64(part)
-part.add_header('Content-Disposition', 'attachment; filename=' + SCHEDULE_FILE_NAME)
-msg.attach(part)
+attachment = SCHEDULE_FILE_PATH
+mail.Attachments.Add(attachment)
 
-smtp = smtplib.SMTP(EMAIL_PROVIDER, EMAIL_PROVIDER_PORT)
-smtp.starttls()
-smtp.login(MY_EMAIL, MY_EMAIL_PASSWORD)
-smtp.sendmail(MY_EMAIL, EMAIL_TIMESHEET_RECIPIENT, msg.as_string())
-smtp.quit()
+mail.Send()
