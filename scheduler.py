@@ -10,7 +10,7 @@ import win32com.client as win32
 # User settings constants
 
 EMAIL_TIMESHEET_RECIPIENT = "example@example.com"
-SCHEDULE_FILE_PATH = "C:\\Path\\To\\Timesheet\\timesheet.xlsx"
+SCHEDULE_FILE_PATH = "C:/Path/To/Timesheet/timesheet.xlsx"
 SCHEDULE_SHEET_NAME = 'Sheet1'
 SCHEDULE_SHEET_WEEK_DATES_BEGINNING_CELL = 'B19'
 SCHEDULE_SHEET_WEEK_STARTING_CELL = 'E8'
@@ -41,7 +41,7 @@ for rows in scheduleSheet[SCHEDULE_SHEET_WEEK_DATES_BEGINNING_CELL:SCHEDULE_SHEE
     for cell in rows:
         day = formatDate((TODAY - timedelta(days=daysToSubstract)))
         daysToSubstract -= 1
-        scheduleSheet[cell.coordinate] = day
+        scheduleSheet[cell.coordinate] = day # This writes "day" to the cell in in the sheet.
 
 # Replaces the 'Week Starting' cell by removing 7 days from today's date.
 
