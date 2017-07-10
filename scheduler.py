@@ -1,13 +1,13 @@
 # Author: Etienne Audet-Cobello
 
-# Imports
+# Imports.
 
 import openpyxl
 from datetime import date
 from datetime import timedelta
 import win32com.client as win32
 
-# User settings constants
+# User settings constants.
 
 EMAIL_TIMESHEET_RECIPIENT = "example@example.com"
 SCHEDULE_FILE_PATH = "C:/Path/To/Timesheet/timesheet.xlsx"
@@ -17,7 +17,7 @@ SCHEDULE_SHEET_WEEK_STARTING_CELL = 'E8'
 SCHEDULE_SHEET_WEEK_DATES_ENDING_CELL = 'B25'
 SCHEDULE_SHEET_SIGNATURE_DATE_CELL = 'E34'
 
-# Other constants
+# Other constants.
 
 NUMBER_OF_DAYS_IN_WEEK = 7
 TODAY = date.today()
@@ -41,9 +41,9 @@ for rows in scheduleSheet[SCHEDULE_SHEET_WEEK_DATES_BEGINNING_CELL:SCHEDULE_SHEE
     for cell in rows:
         day = formatDate((TODAY - timedelta(days=daysToSubstract)))
         daysToSubstract -= 1
-        scheduleSheet[cell.coordinate] = day # This writes "day" to the cell in in the sheet.
+        scheduleSheet[cell.coordinate] = day # This writes "day" to the cell in the sheet.
 
-# Replaces the 'Week Starting' cell by removing 7 days from today's date.
+# Replaces the "Week Starting" cell by removing 7 days from today's date.
 
 weekStarting = formatDate((TODAY - timedelta(days=NUMBER_OF_DAYS_IN_WEEK)))
 scheduleSheet[SCHEDULE_SHEET_WEEK_STARTING_CELL] = weekStarting
