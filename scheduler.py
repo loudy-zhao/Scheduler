@@ -1,5 +1,3 @@
-# Author: Etienne Audet-Cobello
-
 # Imports.
 
 import openpyxl
